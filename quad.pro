@@ -7,9 +7,9 @@ QMAKE_CXXFLAGS_RELEASE -= -O1
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE *= -O3
 QMAKE_CXXFLAGS_RELEASE *= -fpermissive
-#QMAKE_LFLAGS_RELEASE += -lquadmath
 
-INCLUDEPATH += /usr/lib/gcc/x86_64-pc-linux-gnu/11.1.0/include/
+#QMAKE_LFLAGS_RELEASE += -lquadmath
+#INCLUDEPATH += /usr/lib/gcc/x86_64-pc-linux-gnu/11.1.0/include/
 
 SOURCES += \
         main.cpp \
