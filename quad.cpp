@@ -2,7 +2,8 @@
 
 Float Quad::apply(Function* f) const {
     Float o = 0.0;
-    for(int i = 0; i < size(); i+=2) {
+    auto z = size();
+    for(int i = 0; i < z; i+=2) {
         o += f->evaluate(operator()(i)) * operator()(i+1);
     }
     return o;
@@ -35,14 +36,12 @@ Quad Quad::_newtons(Spline s) {
 Quad Quad::newtons(Spline s, Float error) {
     Float err = 1.0;
     auto q = Quad(*this);
-    while(std::isfinite(err.val()) and err > error) {
+    while(err > error) {
         q = q._newtons(s);
         err = q.error(s);
         if(LOG_ERROR)
             std::cout << "ERROR: " << err << "\n";
     }
-    if(!std::isfinite(err.val())) //jacobian is not invertible
-        std::cout << "DIVERGED: " << err << "\n";
     return q;
 }
 
@@ -53,7 +52,7 @@ Quad Quad::newtons_min(Spline s, int iterations) {
     Float mn_err = 1.0;
     auto mn_q = Quad(*this);
 
-    for(int i = 0; i < iterations && std::isfinite(err.val()); i++) {
+    for(int i = 0; i < iterations; i++) {
         q = q._newtons(s);
         err = q.error(s);
 
@@ -64,8 +63,6 @@ Quad Quad::newtons_min(Spline s, int iterations) {
         if(LOG_ERROR)
             std::cout << "ERROR: " << err << "\n";
     }
-    if(!std::isfinite(err.val())) //jacobian is not invertible
-        std::cout << "DIVERGED: " << err << "\n";
     return mn_q;
 }
 
@@ -142,6 +139,37 @@ Quad Quad::constructGuess(int N, int order, Knot k) {
         }
     }
     return q;
+}
+
+Quad Quad::truncate() {
+    auto q = Quad(*this);
+    std::stringstream ss;
+    //truncates quad to precision as shown by program output
+    ss << std::setprecision(std::cout.precision());
+    for(int i = 0; i < q.size(); i+=2) {
+        ss << q(i);
+        q(i) = std::stod(ss.str());
+        ss.str(std::string());
+    }
+    return q;
+}
+
+VectorXFloat Quad::nodal_pattern(Spline s) {
+    auto q = Quad(*this);
+    auto z = s.size()-(2*s.order());
+    auto v = VectorXFloat(z);
+    v.setZero();
+    for(int i = s.order(); i < s.size()-s.order(); i++) {
+        //is there a node in this span?
+        //terribly unoptimized
+        for(int qi = 0; qi < q.size(); qi+=2) {
+            auto qv = q(qi);
+            if(qv > s(i-1) && qv < s(i)){
+                v(i-s.order()) = 1;
+            }
+        }
+    }
+    return v;
 }
 
 

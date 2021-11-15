@@ -102,6 +102,19 @@ Poly Spline::lerp(int i, int p, bool inverse) {
     return o;
 }
 
+Knot Spline::constructKnotM2(int N, int order) {
+    auto n = (N+1)/2;
+    Float step = 1.0/(Float)n;
+    Knot k = Knot(N+(order*2)+1);
+    int idx = 0;
+    for(int i = -1; i < n+2; i++) {
+        k(idx) = i*step;
+        k(idx+1) = i*step;
+        idx+=2;
+    }
+    return k;
+}
+
 Knot Spline::constructKnot(int N, int order) {
     Float step = 1.0/(Float)N;
     Knot k = Knot(N+(order*2)+1);
@@ -110,3 +123,4 @@ Knot Spline::constructKnot(int N, int order) {
     }
     return k;
 }
+

@@ -8,24 +8,24 @@ using namespace std;
 int main()
 {
     cout.precision(std::numeric_limits<double>::max_digits10-1);
+
     const auto epsilon = std::numeric_limits<double>::epsilon()/2.0;
 
     if(true) {
         cout << "DEMO: C1 to C2 via Homotopy Continuation\n";
-        cout << "N = 11\n";
+        cout << "N = 39\n";
 
-        Knot src = Spline::constructKnot(11, 3);
-        Knot tgt(18);
-        tgt << -0.16666666666666666, -0.16666666666666666, 0.0, 0.0, 0.16666666666666666, 0.16666666666666666, 0.3333333333333333, 0.3333333333333333, 0.5, 0.5, 0.6666666666666666, 0.6666666666666666, 0.8333333333333334, 0.8333333333333334, 1.0, 1.0, 1.1666666666666667, 1.1666666666666667;
+        Knot src = Spline::constructKnot(39, 3);
+        Knot tgt = Spline::constructKnotM2(39, 3);
 
         //First compute an accurate C2 rule by guessing
         Spline s = Spline(src);
         s.compute();
-        Quad q = Quad::constructGuess(11, 3, src);
-        q = q.newtons_min(s, 1000);
+        Quad q = Quad::constructGuess(39, 3, src);
+        q = q.newtons_min(s, 20);
 
         //Now find the C1 rule
-        q = q.continuation_edge(src, tgt, 1000, epsilon);
+        q = q.continuation_edge(src, tgt, 100, epsilon);
         //Iterate result
         s = Spline(tgt);
         s.compute();
@@ -35,12 +35,13 @@ int main()
         cout << "C1 QUAD:\n" << q << "\n";
 
         //Now do it all in reverse to get C2
-        q = q.continuation_edge(tgt, src, 1000, epsilon);
+        q = q.continuation_edge(tgt, src, 100, epsilon);
         //Iterate result
         s = Spline(src);
         s.compute();
-        q = q.newtons(s, epsilon);
+        q = q.newtons_min(s, 20);
         //Print quad
+        //q = q.truncate();
         cout << "C2 ERROR: " << q.error(s) << "\n";
         cout << "C2 QUAD:\n" << q << "\n\n\n";
     }
@@ -49,22 +50,15 @@ int main()
     if(true) {
         cout << "DEMO: C2 Uniform to C2 Non-Uniform via Homotopy Continuation\n";
 
-        Knot a(12);
-        a << -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6;
-
+        Knot a = Spline::constructKnot(5, 3);
         Knot b(12);
         b << -0.6, -0.55, -0.5, 0, 0.4, 0.45, 0.55, 0.6, 1, 1.5, 1.55, 1.6;
 
         Spline s = Spline(b);
         s.compute();
 
-        Quad q(8);
-        q << 0.066, 0.169, 0.33, 0.33, 0.67, 0.33, 0.933, 0.169;
-
-
+        Quad q = Quad::constructGuess(5, 3, a);
         q = q.continuation_edge(a, b, 1000, epsilon);
-        q = q.newtons(s, epsilon);
-
         cout << "CONT ERROR: " << q.error(s) << "\n";
         cout << "CONT QUAD:\n" << q << "\n\n\n";
     }
@@ -72,15 +66,14 @@ int main()
     //Construct Quad from guess
     if(true) {
         cout << "DEMO: C2 Uniform from Guess\n";
-        cout << "N = 39\n";
-        Knot k = Spline::constructKnot(39, 3);
-        Quad q = Quad::constructGuess(39, 3, k);
-
+        cout << "N = 101\n";
+        Knot k = Spline::constructKnot(101, 3);
+        Quad q = Quad::constructGuess(101, 3, k);
         Spline s = Spline(k);
         s.compute();
 
-        q = q.newtons(s, epsilon);
-
+        cout << "NEWTONS START\n";
+        q = q.newtons_min(s, 20);
         cout << "GUESS ERROR: " << q.error(s) << "\n";
         cout << "GUESS QUAD:\n" << q << "\n\n\n";
     }

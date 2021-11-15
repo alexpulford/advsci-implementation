@@ -1,9 +1,6 @@
 #ifndef SPLINE_H
 #define SPLINE_H
 #include <vector>
-#include <autodiff/forward/real.hpp>
-#include <autodiff/forward/real/eigen.hpp>
-
 #include "ppoly.h"
 #include "float.h"
 
@@ -36,6 +33,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Spline& s);
 
     static Knot constructKnot(int N, int order);
+    static Knot constructKnotM2(int N, int order);
 };
 
 #endif // SPLINE_H

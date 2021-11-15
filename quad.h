@@ -3,6 +3,8 @@
 #include "function.h"
 #include "spline.h"
 #include "float.h"
+#include <sstream>
+#include <iomanip>
 
 class Quad : public VectorXFloat {
 private:
@@ -17,8 +19,10 @@ public:
     Float error(Spline s);
     Quad continuation(Knot a, Knot b, const int steps, const Float err);
     Quad continuation_edge(Knot a, Knot b, const int steps, const Float err);
+    VectorXFloat nodal_pattern(Spline s);
     friend std::ostream& operator<<(std::ostream& os, const Quad& q);
 
+    Quad truncate();
     static Quad constructGuess(int N, int order, Knot k);
 };
 

@@ -2,9 +2,6 @@
 #define PPOLY_H
 #include <memory>
 #include <vector>
-#include <autodiff/forward/real.hpp>
-#include <autodiff/forward/real/eigen.hpp>
-
 #include "poly.h"
 #include "function.h"
 #include "float.h"
