@@ -13,5 +13,4 @@ using MatrixXFloat = Eigen::Matrix<Float, -1, -1, 0, -1, -1>;
 #define LOG_STEPS false
 #define LOG_ERROR false
 
-
 #endif // FLOAT_H

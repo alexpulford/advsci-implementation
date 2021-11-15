@@ -1,6 +1,5 @@
 #ifndef PPOLY_H
 #define PPOLY_H
-#include <memory>
 #include <vector>
 #include "poly.h"
 #include "function.h"
@@ -19,7 +18,7 @@ typedef struct {
 class PPoly : public Function
 {
 private:
-    std::vector<std::shared_ptr<Piece>> pieces;
+    std::vector<Piece> pieces;
 public:
     PPoly();
     Span domain = {0, 1};
